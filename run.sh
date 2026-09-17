@@ -16,7 +16,7 @@ nohup sh -c '
   export HERDR_BIN_PATH
   while :; do
     HERDR_SOCKET_PATH="'"$SOCK"'" sh report-once.sh
-    sleep 15
+    sleep 5
   done
 ' >/dev/null 2>&1 &
 echo $! > "$PIDFILE"
