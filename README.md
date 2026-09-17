@@ -14,16 +14,18 @@ Emoji fallbacks keep working on machines without the font installed.
 ## Install
 
 ```bash
-# 1. Build + install the font (requires uv, or pip install fonttools)
-uv run tools/build-font.py
-cp build/AgentIcons.otf ~/Library/Fonts/     # macOS
-# Linux: cp build/AgentIcons.otf ~/.local/share/fonts/ && fc-cache
+# 1. Install the plugin (prebuilt font ships in the repo — no build needed)
+herdr plugin install adihex/herdr-agent-icons
 
-# 2. Link the plugin
-herdr plugin link /path/to/herdr-agent-icons
+# 2. Install the logo font for your OS, then restart your terminal
+herdr plugin action invoke local.agent-icons.install-font
 
 # 3. Add the $icon token to your sidebar layout (~/.config/herdr/config.toml)
 ```
+
+For local development, use `herdr plugin link /path/to/checkout` instead.
+To rebuild the font yourself: `uv run tools/build-font.py` (or `pip install
+fonttools` + `python3 tools/build-font.py`).
 
 ```toml
 [ui.sidebar.agents]

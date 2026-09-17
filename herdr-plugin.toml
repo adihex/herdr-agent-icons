@@ -13,3 +13,10 @@ id = "refresh"
 title = "Agent icons: refresh now"
 contexts = ["global"]
 command = ["sh", "report-once.sh"]
+
+[[actions]]
+id = "install-font"
+title = "Agent icons: install logo font"
+contexts = ["global"]
+platforms = ["macos", "linux"]
+command = ["sh", "install-font.sh"]
