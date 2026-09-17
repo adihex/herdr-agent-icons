@@ -128,7 +128,7 @@ def main():
     for i, svg in enumerate(svgs):
         g, n = svg_to_glyph(svg)
         name = svg.stem
-        cp = 0xE000 + i
+        cp = 0xF0000 + i  # Plane-15 PUA: no collisions with Nerd Fonts etc.
         names.append(name)
         glyphs.append(g)
         cps[name] = cp
