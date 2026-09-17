@@ -55,13 +55,50 @@ devin   @devin      # @name = glyph from logos/name.svg via the font
 letta   🧠          # literal fallback (emoji, nerd-font glyph, letter)
 ```
 
-To add a new agent logo:
+### Add your agent's logo (local, no font rebuild)
 
-1. Drop `logos/<name>.svg` into the repo (official vector, ideally monochrome).
-2. `uv run tools/build-font.py` → new codepoint in `build/codepoints.tsv`.
-3. Add `<agent-id>  @<name>` to `icons.conf`.
+Put any literal glyph — emoji, nerd-font char, letter — on the right side of
+`icons.conf`:
 
-Get the agent id from `herdr agent list` (`agent` field).
+```text
+myagent   🔥
+```
+
+Find the canonical agent id with `herdr agent list` (the `agent` field), then
+run `herdr plugin action invoke local.agent-icons.refresh`.
+
+### Add a real vector logo
+
+1. Get the agent's canonical id (`herdr agent list`).
+2. Drop the official SVG into `logos/<name>.svg` — monochrome/single-color
+   sources render best at one terminal cell. Good sources: the vendor's
+   `favicon.svg`, [Simple Icons](https://simpleicons.org),
+   [LobeHub Icons](https://github.com/lobehub/lobe-icons).
+3. Rebuild the font: `uv run tools/build-font.py`. This assigns the next free
+   private-use codepoint (`U+100000+`, above the Nerd Font range) and updates
+   `build/AgentIcons.otf` + `build/codepoints.tsv`.
+4. Reference it in `icons.conf`: `<agent-id>  @<name>` (the `@name` matches
+   the SVG filename).
+5. Reinstall the font (`sh install-font.sh`), restart your terminal, refresh.
+
+### Contributing a logo upstream
+
+PRs welcome — include **all four** so installs stay zero-build for users:
+
+- `logos/<name>.svg` (official vector; note the source in the PR)
+- the `icons.conf` line
+- regenerated `build/AgentIcons.otf`
+- regenerated `build/codepoints.tsv`
+
+Codepoints are assigned in sorted filename order, so rebuild rather than
+hand-editing `codepoints.tsv`.
+
+## Marketplace
+
+This plugin is listed in the Herdr marketplace automatically: the index
+discovers public GitHub repos tagged `herdr-plugin` that contain a parseable
+`herdr-plugin.toml`. Listing refreshes roughly every 30 minutes — no
+submission step.
 
 ## Files
 
@@ -72,6 +109,7 @@ Get the agent id from `herdr agent list` (`agent` field).
 | `icons.sh`            | conf → glyph resolver                          |
 | `report-once.sh`      | reports `$icon` for every agent pane           |
 | `run.sh`              | startup hook: spawns the reporter loop         |
+| `install-font.sh`     | installs AgentIcons.otf + rebuilds font cache  |
 | `logos/*.svg`         | source vector logos                            |
 | `tools/build-font.py` | SVGs → `build/AgentIcons.otf` + codepoints.tsv |
 
