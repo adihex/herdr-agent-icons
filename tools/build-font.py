@@ -123,16 +123,35 @@ def main():
     if not svgs:
         sys.exit("no SVGs in logos/")
 
+    # Stable codepoint assignments: codepoints.map pins name -> cp forever,
+    # so adding a logo never renumbers existing glyphs (a renumber would
+    # desync the font installed on the machine from reported tokens).
+    map_file = BUILD / "codepoints.map"
+    assigned = {}
+    if map_file.exists():
+        for line in map_file.read_text().splitlines():
+            name, cp = line.split()
+            assigned[name] = int(cp, 16)
+    next_cp = max(assigned.values(), default=0x100000 - 1) + 1
+
     empty = T2CharStringPen(UPM, None)
     names, glyphs, cps = [".notdef"], [empty.getCharString()], {}
-    for i, svg in enumerate(svgs):
+    for svg in svgs:
         g, n = svg_to_glyph(svg)
         name = svg.stem
-        cp = 0x100000 + i  # Plane-16 PUA: Nerd Fonts occupy F0001..F1AF0.
+        if name not in assigned:
+            assigned[name] = next_cp
+            next_cp += 1
+            print(f"{name:20s} U+{assigned[name]:05X}  NEW ({n} path(s))")
+        else:
+            print(f"{name:20s} U+{assigned[name]:05X}  ({n} path(s))")
         names.append(name)
         glyphs.append(g)
-        cps[name] = cp
-        print(f"{name:20s} U+{cp:04X}  ({n} path(s))")
+        cps[name] = assigned[name]
+
+    with open(map_file, "w") as f:
+        for name, cp in sorted(assigned.items(), key=lambda kv: kv[1]):
+            f.write(f"{name}\t{cp:05X}\n")
 
     fb = FontBuilder(UPM, isTTF=False)
     fb.setupGlyphOrder(names)
