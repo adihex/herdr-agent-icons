@@ -10,13 +10,13 @@ case "$(uname -s)" in
   Darwin)
     cp "$SRC" ~/Library/Fonts/AgentIcons.otf
     atsutil databases -remove 2>/dev/null || true
-    echo "installed to ~/Library/Fonts — restart your terminal to pick it up"
+    echo "installed to ~/Library/Fonts — fully quit the terminal app (Cmd+Q) and reopen it"
     ;;
   Linux)
     mkdir -p ~/.local/share/fonts
     cp "$SRC" ~/.local/share/fonts/AgentIcons.otf
     fc-cache -f >/dev/null 2>&1 || true
-    echo "installed to ~/.local/share/fonts — restart your terminal to pick it up"
+    echo "installed to ~/.local/share/fonts — fully quit the terminal app and reopen it"
     ;;
   *)
     echo "unsupported OS — copy $SRC into your font directory manually"; exit 1 ;;

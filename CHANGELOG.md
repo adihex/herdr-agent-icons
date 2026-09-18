@@ -6,6 +6,11 @@
 - Command Code (`cmd`) logo — official logomark (⌘) from
   [commandcode.ai/brand](https://commandcode.ai/brand).
 
+**Docs**
+- After `install-font` or a font rebuild, fully quit the terminal app (Ghostty:
+  Cmd+Q). Reloading config leaves the old font in memory, so new glyphs render
+  as `?`.
+
 ## 0.2.0 — 2026-09-17
 
 **Added**
