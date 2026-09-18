@@ -1,6 +1,6 @@
 id = "local.agent-icons"
 name = "Agent Icons"
-version = "0.1.0"
+version = "0.2.0"
 min_herdr_version = "0.7.0"
 description = "Report a per-agent emoji/glyph as the $icon sidebar token."
 platforms = ["linux", "macos"]
