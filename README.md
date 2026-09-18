@@ -17,10 +17,12 @@ Emoji fallbacks keep working on machines without the font installed.
 # 1. Install the plugin (prebuilt font ships in the repo — no build needed)
 herdr plugin install adihex/herdr-agent-icons
 
-# 2. Install the logo font for your OS, then restart your terminal
+# 2. Install the logo font for your OS
 herdr plugin action invoke local.agent-icons.install-font
 
-# 3. Add the $icon token to your sidebar layout (~/.config/herdr/config.toml)
+# 3. Fully quit the terminal app, then reopen it (see below)
+
+# 4. Add the $icon token to your sidebar layout (~/.config/herdr/config.toml)
 ```
 
 For local development, use `herdr plugin link /path/to/checkout` instead.
@@ -38,6 +40,16 @@ rows = [
 ```bash
 herdr server reload-config
 ```
+
+### Font updates (Ghostty and others)
+
+Installing or rebuilding `AgentIcons.otf` replaces the file on disk, but a
+running terminal keeps the **old** font in memory. New logos then render as
+`?` (missing glyph) while older ones still draw.
+
+Reloading Ghostty's config is not enough. **Fully quit the app** (macOS:
+Cmd+Q, not just close the window) and open it again. The same applies after
+`install-font` or after pulling a release that adds a glyph.
 
 The plugin's startup hook spawns a reporter loop that reports each pane's icon
 every 5s. Trigger manually anytime:
@@ -80,7 +92,8 @@ run `herdr plugin action invoke local.agent-icons.refresh`.
    `build/codepoints.tsv`. Existing glyphs keep their assignments.
 4. Reference it in `icons.conf`: `<agent-id>  @<name>` (the `@name` matches
    the SVG filename).
-5. Reinstall the font (`sh install-font.sh`), restart your terminal, refresh.
+5. Reinstall the font (`sh install-font.sh`), **fully quit and reopen** the
+   terminal app, then refresh.
 
 ### Contributing a logo upstream
 
@@ -119,8 +132,10 @@ submission step.
 - Herdr sidebar rows are token lists (`state_icon`, `agent`, `$custom`, …).
 - `$icon` is a custom token fed by `herdr pane report-metadata <pane> --token icon=<char>`.
 - `<char>` is a PUA codepoint; the installed AgentIcons font draws the logo.
-- Without the font, the codepoint renders as a blank/□ — set an emoji in
-  `icons.conf` instead if you don't want the font.
+- Without the font, the codepoint renders as a blank/`?`/`□`. If *new* logos
+  show `?` but older ones work, the terminal is still using a cached copy of
+  the previous font — fully quit and reopen it.
+- Set an emoji in `icons.conf` instead if you don't want the font.
 
 ## Logo sources
 
