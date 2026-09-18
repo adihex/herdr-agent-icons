@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.0 — 2026-09-18
+
+**Added**
+- Command Code (`cmd`) logo — official logomark (⌘) from
+  [commandcode.ai/brand](https://commandcode.ai/brand).
+
 ## 0.2.0 — 2026-09-17
 
 **Added**

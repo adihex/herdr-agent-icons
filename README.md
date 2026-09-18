@@ -40,7 +40,7 @@ herdr server reload-config
 ```
 
 The plugin's startup hook spawns a reporter loop that reports each pane's icon
-every 15s. Trigger manually anytime:
+every 5s. Trigger manually anytime:
 
 ```bash
 herdr plugin action invoke local.agent-icons.refresh
@@ -74,9 +74,10 @@ run `herdr plugin action invoke local.agent-icons.refresh`.
    sources render best at one terminal cell. Good sources: the vendor's
    `favicon.svg`, [Simple Icons](https://simpleicons.org),
    [LobeHub Icons](https://github.com/lobehub/lobe-icons).
-3. Rebuild the font: `uv run tools/build-font.py`. This assigns the next free
-   private-use codepoint (`U+100000+`, above the Nerd Font range) and updates
-   `build/AgentIcons.otf` + `build/codepoints.tsv`.
+3. Rebuild the font: `uv run tools/build-font.py`. This pins the next free
+   private-use codepoint (`U+100000+`, above the Nerd Font range) in
+   `build/codepoints.map` and updates `build/AgentIcons.otf` +
+   `build/codepoints.tsv`. Existing glyphs keep their assignments.
 4. Reference it in `icons.conf`: `<agent-id>  @<name>` (the `@name` matches
    the SVG filename).
 5. Reinstall the font (`sh install-font.sh`), restart your terminal, refresh.
@@ -88,10 +89,10 @@ PRs welcome — include **all four** so installs stay zero-build for users:
 - `logos/<name>.svg` (official vector; note the source in the PR)
 - the `icons.conf` line
 - regenerated `build/AgentIcons.otf`
-- regenerated `build/codepoints.tsv`
+- regenerated `build/codepoints.tsv` and `build/codepoints.map`
 
-Codepoints are assigned in sorted filename order, so rebuild rather than
-hand-editing `codepoints.tsv`.
+Codepoints are pinned in `build/codepoints.map`; a new logo appends the next
+free slot instead of renumbering. Rebuild rather than hand-editing the map.
 
 ## Marketplace
 
@@ -111,7 +112,7 @@ submission step.
 | `run.sh`              | startup hook: spawns the reporter loop         |
 | `install-font.sh`     | installs AgentIcons.otf + rebuilds font cache  |
 | `logos/*.svg`         | source vector logos                            |
-| `tools/build-font.py` | SVGs → `build/AgentIcons.otf` + codepoints.tsv |
+| `tools/build-font.py` | SVGs → OTF + `codepoints.tsv` + `codepoints.map` |
 
 ## How it works
 
@@ -124,7 +125,8 @@ submission step.
 ## Logo sources
 
 Vendor/mark sources: Devin (devin.ai favicon), Droid (factory.ai favicon),
-others via [Simple Icons](https://simpleicons.org) and
+Command Code ([brand logomark](https://commandcode.ai/brand)), others via
+[Simple Icons](https://simpleicons.org) and
 [LobeHub Icons](https://github.com/lobehub/lobe-icons). Trademarks belong to
 their owners; logos are used here for identification only.
 
